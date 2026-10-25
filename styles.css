@@ -1,0 +1,258 @@
+/* ==========================================================================
+   FINBOT - VISUAL DESIGN SYSTEM & CURSOR GLOW EFFECT STYLESHEET
+   ========================================================================== */
+
+/* Root CSS Variables */
+:root {
+  --mouse-x: -500px;
+  --mouse-y: -500px;
+  --color-canvas: #12161F;
+  --color-sidebar: #171C28;
+  --color-card-surface: rgba(26, 33, 48, 0.75);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --emerald-glow: rgba(16, 185, 129, 0.25);
+  --cyan-glow: rgba(6, 182, 212, 0.25);
+}
+
+/* Base Body Styles */
+body {
+  background-color: var(--color-canvas);
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ==========================================================================
+   INTERACTIVE MOUSE-TRACKING RADIAL SPOTLIGHT GLOW EFFECT
+   ========================================================================== */
+
+/* Fullscreen Ambient Radial Spotlight Aura */
+#ambient-glow {
+  background: radial-gradient(
+    500px circle at var(--mouse-x) var(--mouse-y),
+    rgba(16, 185, 129, 0.12),
+    rgba(56, 189, 248, 0.05),
+    transparent 60%
+  );
+  will-change: background;
+  pointer-events: none;
+}
+
+/* Per-Card Interactive Cursor Glow Lighting (.glow-card) */
+.glow-card {
+  position: relative;
+  background-color: var(--color-card-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease;
+  overflow: hidden;
+}
+
+/* Card Mouse Spotlight Overlay via ::before pseudo-element */
+.glow-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    380px circle at var(--card-mouse-x, -500px) var(--card-mouse-y, -500px),
+    rgba(16, 185, 129, 0.12),
+    rgba(56, 189, 248, 0.06),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glow-card:hover::before {
+  opacity: 1;
+}
+
+/* Hover Lift on Cards */
+.glow-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.08);
+}
+
+/* ==========================================================================
+   NAVIGATION & ACTIVE STATES
+   ========================================================================== */
+.nav-item.active {
+  background-color: #262F42;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.nav-item:hover:not(.active) {
+  background-color: rgba(38, 47, 66, 0.45);
+}
+
+/* ==========================================================================
+   PERSONA TOGGLES (SIDEBAR QUICK PERSONA SWITCHER)
+   ========================================================================== */
+.persona-card.active {
+  background-color: rgba(30, 41, 59, 0.85);
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
+.persona-card.active .toggle-track {
+  background-color: #10B981;
+}
+
+.persona-card.active .toggle-thumb {
+  transform: translateX(12px);
+  background-color: #ffffff;
+}
+
+/* ==========================================================================
+   MICRO-ANIMATIONS & ENTRANCE EFFECTS
+   ========================================================================== */
+@keyframes entranceFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-entrance {
+  animation: entranceFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Floating AI Mascot Keyframes */
+@keyframes floatMascot {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(1.5deg);
+  }
+}
+
+.animate-float {
+  animation: floatMascot 3.2s ease-in-out infinite;
+}
+
+/* Staggered progress bar widths */
+.progress-bar-fill {
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
+  will-change: width;
+}
+
+/* Interactive Button Hover Lift & Glow Pulse */
+button:not(:disabled) {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              background-color 0.2s ease, 
+              color 0.2s ease;
+}
+
+/* Category Filter Segmented Pills */
+.cat-pill.active {
+  background-color: #262F42;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* ==========================================================================
+   AI ADVISOR NEON GLOWING BORDER CARD
+   ========================================================================== */
+.ai-advisor-card {
+  position: relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* ==========================================================================
+   CUSTOM SLEEK DARK SCROLLBARS
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(18, 22, 31, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.4);
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ==========================================================================
+   MODAL ENTRANCE ANIMATIONS
+   ========================================================================== */
+@keyframes scaleUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-scaleUp {
+  animation: scaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(-6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.18s ease-out forwards;
+}
+
+/* Number Counter Animation Pulse */
+.counter-pulse {
+  animation: numPulse 0.4s ease-out;
+}
+
+@keyframes numPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); color: #34D399; }
+  100% { transform: scale(1); }
+}
+
+/* Print Styles for Downloadable Monthly Statement */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  aside, header, #ambient-glow, #ai-chat-drawer-backdrop, #toast-container, button {
+    display: none !important;
+  }
+  main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+}

@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinBot — AI Personal Finance Advisor</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN with configuration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            canvas: '#12161F',
+            sidebar: '#171C28',
+            surface: 'rgba(26, 33, 48, 0.75)',
+            cardHover: 'rgba(32, 41, 60, 0.85)',
+            borderSubtle: 'rgba(255, 255, 255, 0.08)',
+            borderLight: 'rgba(255, 255, 255, 0.14)',
+            finGreen: {
+              400: '#34D399',
+              500: '#10B981',
+              600: '#059669',
+              accent: '#22C55E',
+              bright: '#2ECC71'
+            },
+            finCoral: {
+              400: '#F87171',
+              500: '#EF4444',
+              accent: '#F06565'
+            },
+            finCyan: {
+              400: '#38BDF8',
+              500: '#06B6D4'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Custom CSS for Glow Effects, Custom Scrollbars, and Micro-interactions -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#12161F] text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white min-h-screen relative overflow-x-hidden">
+
+  <!-- Interactive Global Mouse-Tracking Ambient Spotlight Glow Layer -->
+  <div id="ambient-glow" class="pointer-events-none fixed inset-0 z-0 transition-opacity duration-300"></div>
+
+  <!-- Main Application Wrapper -->
+  <div class="relative z-10 flex min-h-screen w-full">
+
+    <!-- ========================================== -->
+    <!-- A. LEFT SIDEBAR (Fixed 250px Width) -->
+    <!-- ========================================== -->
+    <aside class="fixed top-0 bottom-0 left-0 w-[250px] bg-[#171C28] border-r border-[rgba(255,255,255,0.08)] flex flex-col justify-between p-4 z-40 select-none shadow-2xl transition-all duration-300">
+      
+      <!-- Top Section: Brand Header & Navigation -->
+      <div class="flex flex-col space-y-6">
+        
+        <!-- 1. Brand Header -->
+        <div class="flex items-center space-x-3 px-2 pt-1 pb-2">
+          <!-- 3D AI Robot Mascot with Floating Animation -->
+          <div class="relative group cursor-pointer" id="robot-mascot-btn">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-400 p-[2px] shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-transform duration-300 group-hover:scale-105">
+              <div class="w-full h-full bg-[#171C28] rounded-[14px] flex items-center justify-center overflow-hidden relative">
+                <!-- Floating robot avatar icon -->
+                <svg class="w-7 h-7 text-emerald-400 animate-float" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                  <circle cx="12" cy="5" r="2"></circle>
+                  <path d="M12 7v4"></path>
+                  <line x1="8" y1="16" x2="8" y2="16"></line>
+                  <line x1="16" y1="16" x2="16" y2="16"></line>
+                  <path d="M10 18h4"></path>
+                </svg>
+                <!-- Glowing cyan eye pulse -->
+                <span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping opacity-75"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Brand Typography -->
+          <div class="flex flex-col">
+            <div class="flex items-center space-x-1.5">
+              <span class="text-[22px] font-extrabold tracking-tight text-white leading-none">FinBot</span>
+              <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-md">PRO</span>
+            </div>
+            <span class="text-[11px] font-medium text-slate-400 tracking-wide mt-1">AI Finance Advisor</span>
+          </div>
+        </div>
+
+        <!-- 2. Navigation Menu -->
+        <nav class="flex flex-col space-y-1.5 px-1" id="sidebar-nav">
+          <!-- Dashboard (Active) -->
+          <button data-nav="dashboard" class="nav-item active flex items-center space-x-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
+            <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Dashboard</span>
+            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10B981]"></span>
+          </button>
+
+          <!-- Income Tracker -->
+          <button data-nav="income" class="nav-item flex items-center space-x-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200">
+            <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            <span>Income Tracker</span>
+          </button>
+
+          <!-- Expense Log -->
+          <button data-nav="expenses" class="nav-item flex items-center space-x-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200">
+            <svg class="w-4 h-4 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <span>Expense Log</span>
+          </button>
+
+          <!-- AI Budget Plans -->
+          <button data-nav="budget" class="nav-item flex items-center space-x-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200">
+            <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+              <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+            </svg>
+            <span>AI Budget Plans</span>
+            <span class="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">AI</span>
+          </button>
+
+          <!-- Savings Goals -->
+          <button data-nav="savings" class="nav-item flex items-center space-x-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200">
+            <svg class="w-4 h-4 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path>
+              <path d="M12 6v2"></path>
+              <path d="M12 16v2"></path>
+            </svg>
+            <span>Savings Goals</span>
+          </button>
+
+          <!-- Monthly Reports -->
+          <button data-nav="reports" class="nav-item flex items-center space-x-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200">
+            <svg class="w-4 h-4 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>Monthly Reports</span>
+          </button>
+
+          <!-- Settings -->
+          <button data-nav="settings" class="nav-item flex items-center space-x-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200">
+            <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Settings</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- 3. Quick Persona Switcher (Bottom Card Box) -->
+      <div class="glow-card relative rounded-2xl p-3.5 bg-[rgba(26,33,48,0.7)] border border-[rgba(255,255,255,0.08)] backdrop-blur-md shadow-lg overflow-hidden">
+        <!-- Ambient subtle card glow -->
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Quick Persona Switcher</span>
+          <span id="persona-badge-live" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Active</span>
+        </div>
+
+        <!-- 2x2 Grid of Interactive Toggle Switches -->
+        <div class="grid grid-cols-2 gap-2" id="persona-toggles">
+          
+          <!-- Salaried (Default ON) -->
+          <div data-persona="salaried" class="persona-card active flex flex-col p-2 rounded-xl bg-slate-800/60 border border-emerald-500/40 cursor-pointer transition-all duration-200 hover:border-emerald-400/70">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-white">Salaried</span>
+              <div class="toggle-track w-7 h-4 bg-emerald-500 rounded-full relative p-0.5 transition-colors duration-200">
+                <div class="toggle-thumb w-3 h-3 bg-white rounded-full shadow-sm transform translate-x-3 transition-transform duration-200"></div>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-0.5">$6.2k / mo</span>
+          </div>
+
+          <!-- Student -->
+          <div data-persona="student" class="persona-card flex flex-col p-2 rounded-xl bg-slate-800/30 border border-transparent cursor-pointer transition-all duration-200 hover:bg-slate-800/50 hover:border-slate-700">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-300">Student</span>
+              <div class="toggle-track w-7 h-4 bg-slate-700 rounded-full relative p-0.5 transition-colors duration-200">
+                <div class="toggle-thumb w-3 h-3 bg-slate-400 rounded-full shadow-sm transform translate-x-0 transition-transform duration-200"></div>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-0.5">$1.25k / mo</span>
+          </div>
+
+          <!-- Freelancer -->
+          <div data-persona="freelancer" class="persona-card flex flex-col p-2 rounded-xl bg-slate-800/30 border border-transparent cursor-pointer transition-all duration-200 hover:bg-slate-800/50 hover:border-slate-700">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-300">Freelance</span>
+              <div class="toggle-track w-7 h-4 bg-slate-700 rounded-full relative p-0.5 transition-colors duration-200">
+                <div class="toggle-thumb w-3 h-3 bg-slate-400 rounded-full shadow-sm transform translate-x-0 transition-transform duration-200"></div>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-0.5">$7.8k / mo</span>
+          </div>
+
+          <!-- Household -->
+          <div data-persona="household" class="persona-card flex flex-col p-2 rounded-xl bg-slate-800/30 border border-transparent cursor-pointer transition-all duration-200 hover:bg-slate-800/50 hover:border-slate-700">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-300">Household</span>
+              <div class="toggle-track w-7 h-4 bg-slate-700 rounded-full relative p-0.5 transition-colors duration-200">
+                <div class="toggle-thumb w-3 h-3 bg-slate-400 rounded-full shadow-sm transform translate-x-0 transition-transform duration-200"></div>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-0.5">$9.6k / mo</span>
+          </div>
+
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ========================================== -->
+    <!-- MAIN CONTENT CANVAS (Offset 250px Left) -->
+    <!-- ========================================== -->
+    <main class="ml-[250px] flex-1 flex flex-col min-h-screen relative z-10 p-6 lg:p-8 space-y-6">
+
+      <!-- ========================================== -->
+      <!-- B. TOP HEADER BAR -->
+      <!-- ========================================== -->
+      <header class="flex items-center justify-between gap-4 pb-2 border-b border-[rgba(255,255,255,0.06)]">
+        
+        <!-- 1. Left: Functional Search Bar -->
+        <div class="relative w-80 max-w-sm">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <input 
+            type="text" 
+            id="global-search-input" 
+            placeholder="Search transactions, categories, or insights..." 
+            class="w-full pl-10 pr-9 py-2 rounded-xl bg-[#171C28]/90 text-sm text-white placeholder-slate-400 border border-[rgba(255,255,255,0.1)] focus:outline-none focus:border-emerald-500/80 focus:ring-1 focus:ring-emerald-500/50 transition-all duration-200 shadow-inner"
+          >
+          <button id="clear-search-btn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <!-- 2. Center: Interactive Status Button -->
+        <div class="flex items-center justify-center">
+          <button 
+            id="ai-drawer-trigger-btn" 
+            class="group relative inline-flex items-center space-x-2.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 border border-teal-500/40 hover:border-cyan-400/80 shadow-[0_0_15px_rgba(20,184,166,0.15)] hover:shadow-[0_0_22px_rgba(6,182,212,0.35)] transition-all duration-300 hover:scale-[1.02]"
+            title="Click to open FinBot AI Chat Assistant"
+          >
+            <!-- Brain / AI Pulsing Icon -->
+            <div class="relative flex items-center justify-center">
+              <span class="text-base animate-pulse">🧠</span>
+              <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+            </div>
+            <span class="text-xs font-bold tracking-wide bg-gradient-to-r from-emerald-400 to-cyan-300 bg-clip-text text-transparent group-hover:from-emerald-300 group-hover:to-white">
+              AI Advisor: Active &amp; Analyzing
+            </span>
+            <span class="text-[10px] text-cyan-400/80 font-mono bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20 group-hover:bg-cyan-500/20">Chat 💬</span>
+          </button>
+        </div>
+
+        <!-- 3. Right: Notifications & User Profile Switcher -->
+        <div class="flex items-center space-x-3.5">
+          
+          <!-- Notification Bell Icon with unread badge -->
+          <div class="relative">
+            <button 
+              id="notif-bell-btn" 
+              class="relative p-2.5 rounded-xl bg-[#171C28] text-slate-300 hover:text-white border border-[rgba(255,255,255,0.08)] hover:border-slate-600 transition-all duration-200 hover:scale-105"
+              aria-label="View notifications"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <!-- Unread red badge dot -->
+              <span id="notif-badge" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-[#171C28]"></span>
+            </button>
+
+            <!-- Notifications Dropdown Panel -->
+            <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-[#171C28]/95 backdrop-blur-xl border border-[rgba(255,255,255,0.1)] rounded-2xl shadow-2xl p-3 z-50 animate-fadeIn">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-700/60 mb-2 px-1">
+                <span class="text-xs font-bold text-white uppercase tracking-wider">Live Alerts &amp; Insights</span>
+                <button id="mark-all-read-btn" class="text-[11px] text-emerald-400 hover:underline">Mark all read</button>
+              </div>
+              <div class="flex flex-col space-y-2 max-h-60 overflow-y-auto pr-1" id="notif-list">
+                <!-- Notifications populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- User Profile Switcher -->
+          <div class="relative">
+            <button 
+              id="user-profile-btn" 
+              class="flex items-center space-x-3 p-1.5 pr-3 rounded-2xl bg-[#171C28] border border-[rgba(255,255,255,0.08)] hover:border-slate-600 transition-all duration-200 hover:bg-[#1C2333]"
+            >
+              <!-- Avatar -->
+              <div class="w-9 h-9 rounded-xl overflow-hidden ring-2 ring-emerald-500/30 flex items-center justify-center bg-gradient-to-tr from-emerald-600 to-teal-400">
+                <img id="user-avatar-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" alt="Sarah Chen" class="w-full h-full object-cover">
+              </div>
+
+              <!-- Name & Badge -->
+              <div class="flex flex-col text-left">
+                <span id="user-name-display" class="text-xs font-bold text-white tracking-tight">Sarah Chen</span>
+                <span id="user-role-badge" class="inline-flex items-center text-[10px] font-semibold text-amber-300 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">
+                  Persona: Salaried Professional
+                </span>
+              </div>
+
+              <!-- Dropdown Chevron -->
+              <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <!-- User Menu Dropdown -->
+            <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-[#171C28]/95 backdrop-blur-xl border border-[rgba(255,255,255,0.1)] rounded-2xl shadow-2xl p-2 z-50 animate-fadeIn">
+              <div class="p-2 border-b border-slate-700/60 mb-1">
+                <p class="text-xs font-bold text-white" id="dropdown-full-name">Sarah Chen</p>
+                <p class="text-[11px] text-slate-400" id="dropdown-email">sarah.chen@finbot.ai</p>
+              </div>
+              <div class="py-1">
+                <button class="profile-switch-opt w-full text-left px-2.5 py-1.5 text-xs rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 flex items-center justify-between" data-switch="salaried">
+                  <span>Switch to Salaried</span>
+                  <span class="text-[10px] text-emerald-400 font-mono">$6.2k</span>
+                </button>
+                <button class="profile-switch-opt w-full text-left px-2.5 py-1.5 text-xs rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 flex items-center justify-between" data-switch="student">
+                  <span>Switch to Student</span>
+                  <span class="text-[10px] text-cyan-400 font-mono">$1.25k</span>
+                </button>
+                <button class="profile-switch-opt w-full text-left px-2.5 py-1.5 text-xs rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 flex items-center justify-between" data-switch="freelancer">
+                  <span>Switch to Freelancer</span>
+                  <span class="text-[10px] text-purple-400 font-mono">$7.8k</span>
+                </button>
+                <button class="profile-switch-opt w-full text-left px-2.5 py-1.5 text-xs rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 flex items-center justify-between" data-switch="household">
+                  <span>Switch to Household</span>
+                  <span class="text-[10px] text-amber-400 font-mono">$9.6k</span>
+                </button>
+              </div>
+              <div class="pt-1 border-t border-slate-700/60 mt-1">
+                <button id="open-settings-from-profile" class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">Account Preferences</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      <!-- ========================================== -->
+      <!-- C. ROW 1: THREE KPI SUMMARY CARDS -->
+      <!-- ========================================== -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        
+        <!-- 1. Monthly Income Card -->
+        <div class="glow-card relative rounded-2xl p-5 bg-gradient-to-br from-[rgba(16,185,129,0.14)] to-[rgba(22,28,40,0.85)] border border-[rgba(255,255,255,0.08)] backdrop-blur-md shadow-xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">Monthly Income</span>
+              <div class="flex items-baseline space-x-2 mt-1">
+                <h3 id="kpi-income-val" class="text-2xl font-extrabold text-white tracking-tight font-mono">$6,200.00</h3>
+              </div>
+            </div>
+            <!-- Top Right Green Trend-box Icon -->
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Sparkline & Action Button Row -->
+          <div class="mt-4 flex items-end justify-between">
+            <!-- Smooth Green SVG Sparkline Wave -->
+            <div class="w-40 h-10 overflow-hidden">
+              <svg id="sparkline-income" class="w-full h-full" viewBox="0 0 160 40" fill="none">
+                <defs>
+                  <linearGradient id="income-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#22C55E" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#22C55E" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <path id="sparkline-income-area" d="M0,35 Q40,10 80,25 T160,8 L160,40 L0,40 Z" fill="url(#income-grad)" />
+                <path id="sparkline-income-path" d="M0,35 Q40,10 80,25 T160,8" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" />
+              </svg>
+            </div>
+
+            <!-- Solid Emerald Green + Log Button -->
+            <button 
+              id="btn-log-income" 
+              class="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-[#2ECC71] hover:bg-[#27ae60] text-slate-950 text-xs font-bold shadow-[0_0_15px_rgba(46,204,113,0.35)] transition-all duration-200 hover:scale-105 active:scale-95"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>+ Log</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Monthly Expenses Card -->
+        <div class="glow-card relative rounded-2xl p-5 bg-gradient-to-br from-[rgba(244,63,94,0.14)] to-[rgba(22,28,40,0.85)] border border-[rgba(255,255,255,0.08)] backdrop-blur-md shadow-xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">Monthly Expenses</span>
+              <div class="flex items-baseline space-x-2 mt-1">
+                <h3 id="kpi-expenses-val" class="text-2xl font-extrabold text-white tracking-tight font-mono">$3,450.00</h3>
+              </div>
+            </div>
+            <!-- Top Right Coral Card Icon -->
+            <div class="w-9 h-9 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.2)]">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Sparkline & Action Button Row -->
+          <div class="mt-4 flex items-end justify-between">
+            <!-- Smooth Coral-red SVG Sparkline Wave -->
+            <div class="w-40 h-10 overflow-hidden">
+              <svg id="sparkline-expense" class="w-full h-full" viewBox="0 0 160 40" fill="none">
+                <defs>
+                  <linearGradient id="expense-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#F87171" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#F87171" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <path id="sparkline-expense-area" d="M0,15 Q40,32 80,18 T160,28 L160,40 L0,40 Z" fill="url(#expense-grad)" />
+                <path id="sparkline-expense-path" d="M0,15 Q40,32 80,18 T160,28" stroke="#F87171" stroke-width="2.5" stroke-linecap="round" />
+              </svg>
+            </div>
+
+            <!-- Solid Coral-Red - Log Button -->
+            <button 
+              id="btn-log-expense" 
+              class="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-[#F06565] hover:bg-[#e05252] text-white text-xs font-bold shadow-[0_0_15px_rgba(240,101,101,0.35)] transition-all duration-200 hover:scale-105 active:scale-95"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>- Log</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Savings Progress Card -->
+        <div class="glow-card relative rounded-2xl p-5 bg-gradient-to-br from-[rgba(20,184,166,0.14)] to-[rgba(22,28,40,0.85)] border border-[rgba(255,255,255,0.08)] backdrop-blur-md shadow-xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">Savings Progress</span>
+              <div class="flex items-baseline space-x-2 mt-1">
+                <h3 id="kpi-savings-val" class="text-2xl font-extrabold text-white tracking-tight font-mono">$2,750.00</h3>
+              </div>
+            </div>
+            <!-- Top Right Green Savings Icon -->
+            <div class="w-9 h-9 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-400 shadow-[0_0_12px_rgba(20,184,166,0.2)]">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Dual-tone green/slate sparkline & percentage link footer -->
+          <div class="mt-2">
+            <!-- Sparkline wave -->
+            <div class="w-full h-8 overflow-hidden">
+              <svg id="sparkline-savings" class="w-full h-full" viewBox="0 0 240 32" fill="none">
+                <defs>
+                  <linearGradient id="savings-grad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#34D399"/>
+                    <stop offset="100%" stop-color="#38BDF8"/>
+                  </linearGradient>
+                </defs>
+                <path id="sparkline-savings-path" d="M0,24 C60,26 120,12 180,18 C210,21 230,8 240,6" stroke="url(#savings-grad)" stroke-width="2.5" stroke-linecap="round" />
+              </svg>
+            </div>
+
+            <!-- Footer: 44.3% of income & View Goals > -->
+            <div class="mt-2 flex items-center justify-between text-xs font-medium">
+              <span id="savings-percent-text" class="text-emerald-400 font-mono font-bold tracking-tight">44.3% of income</span>
+              <button id="view-goals-link" class="text-cyan-400 hover:text-cyan-300 font-semibold inline-flex items-center space-x-1 group">
+                <span>View Goals</span>
+                <span class="transform group-hover:translate-x-0.5 transition-transform duration-150">&gt;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- D. ROW 2: BUDGET OVERVIEWS & AI ADVISOR INSIGHTS -->
+      <!-- ========================================== -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        
+        <!-- 1. Budget Overviews & Category Caps (Left Card - 55% / 7 cols) -->
+        <div class="lg:col-span-7 glow-card rounded-2xl p-6 bg-[rgba(26,33,48,0.75)] border border-[rgba(255,255,255,0.08)] backdrop-blur-md shadow-xl flex flex-col justify-between">
+          
+          <!-- Header & 3-way Segmented Pill Toggle -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+            <div>
+              <h3 class="text-base font-bold text-white tracking-tight">Budget Overviews &amp; Category Caps</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Real-time spending vs assigned monthly limits</p>
+            </div>
+
+            <!-- 3-way Segmented Pill Toggle (All | Essential | Discretionary) -->
+            <div class="inline-flex p-1 rounded-xl bg-slate-900/80 border border-slate-700/60 self-start sm:self-auto text-xs font-semibold" id="category-filter-pills">
+              <button data-filter="all" class="cat-pill active px-3 py-1 rounded-lg text-white bg-slate-800 transition-all duration-150 shadow-sm">All</button>
+              <button data-filter="essential" class="cat-pill px-3 py-1 rounded-lg text-slate-400 hover:text-slate-200 transition-all duration-150">Essential</button>
+              <button data-filter="discretionary" class="cat-pill px-3 py-1 rounded-lg text-slate-400 hover:text-slate-200 transition-all duration-150">Discretionary</button>
+            </div>
+          </div>
+
+          <!-- 5 Animated Progress Bars Container -->
+          <div class="space-y-4 pt-4" id="budget-progress-container">
+            <!-- Populated dynamically via JS to seamlessly adapt to all 4 personas -->
+          </div>
+
+          <!-- Bottom subtle note -->
+          <div class="pt-3 text-[11px] text-slate-400 flex items-center justify-between">
+            <span>Caps reset in 6 days • Auto-balanced by AI engine</span>
+            <button id="adjust-caps-btn" class="text-emerald-400 hover:underline font-medium">Adjust Caps</button>
+          </div>
+        </div>
+
+        <!-- 2. AI Advisor Insights (Right Card - 45% / 5 cols, Neon Glowing Border) -->
+        <div class="lg:col-span-5 glow-card rounded-2xl p-6 bg-[rgba(26,33,48,0.85)] border-2 border-emerald-500/70 shadow-[0_0_25px_rgba(16,185,129,0.25)] backdrop-blur-md flex flex-col justify-between relative overflow-hidden group">
+          
+          <!-- Neon border highlight aura -->
+          <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl opacity-20 group-hover:opacity-30 blur-md pointer-events-none transition-opacity duration-300"></div>
+
+          <div class="relative z-10">
+            <!-- Header: Robot Head Icon + AI Advisor Insights + Refresh AI -->
+            <div class="flex items-center justify-between pb-3.5 border-b border-[rgba(255,255,255,0.08)]">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-400">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                    <circle cx="12" cy="5" r="2"></circle>
+                    <path d="M12 7v4"></path>
+                    <line x1="8" y1="16" x2="8" y2="16"></line>
+                    <line x1="16" y1="16" x2="16" y2="16"></line>
+                  </svg>
+                </div>
+                <h3 class="text-base font-bold text-white tracking-tight">AI Advisor Insights</h3>
+              </div>
+
+              <!-- Refresh AI Icon Button -->
+              <button 
+                id="refresh-ai-btn" 
+                class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all duration-200" 
+                title="Refresh AI Insights"
+              >
+                <svg id="refresh-ai-icon" class="w-4 h-4 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 4v6h-6"></path>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- 3 Interactive Insight Sub-Cards -->
+            <div class="space-y-3 pt-4" id="ai-insights-container">
+              
+              <!-- 1. Overspending Alert -->
+              <div class="insight-card p-3 rounded-xl bg-slate-900/60 border border-rose-500/30 hover:border-rose-500/60 transition-all duration-200 cursor-pointer group/item relative">
+                <div class="flex items-start space-x-3">
+                  <span class="text-base flex-shrink-0 mt-0.5">💡</span>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-rose-400">Overspending Alert</span>
+                      <span class="text-[10px] text-slate-400 font-mono">High Priority</span>
+                    </div>
+                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                      Entertainment is <span class="text-rose-400 font-semibold">12% over</span> your persona budget. Consider skipping eating out this weekend to save ~$60.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. Savings Recommendation (with quick "Allocate $240" chip) -->
+              <div class="insight-card p-3 rounded-xl bg-slate-900/60 border border-emerald-500/30 hover:border-emerald-500/60 transition-all duration-200 group/item relative">
+                <div class="flex items-start space-x-3">
+                  <span class="text-base flex-shrink-0 mt-0.5">📈</span>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-emerald-400">Savings Recommendation</span>
+                      <!-- Mini Action Chip on Hover -->
+                      <button id="chip-allocate-240" class="px-2 py-0.5 rounded-md bg-emerald-500 text-slate-950 text-[10px] font-bold shadow-[0_0_10px_rgba(16,185,129,0.3)] hover:scale-105 active:scale-95 transition-all duration-150">
+                        Allocate $240
+                      </button>
+                    </div>
+                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                      You are on track to save an extra <span class="text-emerald-400 font-semibold">$240</span> this month. Should we allocate this to your "Emergency Fund"?
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Smart Insight -->
+              <div class="insight-card p-3 rounded-xl bg-slate-900/60 border border-cyan-500/30 hover:border-cyan-500/60 transition-all duration-200 cursor-pointer group/item relative">
+                <div class="flex items-start space-x-3">
+                  <span class="text-base flex-shrink-0 mt-0.5">🔍</span>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-cyan-400">Smart Insight</span>
+                      <button id="btn-pause-trials" class="text-[10px] text-cyan-300 hover:underline">Review &gt;</button>
+                    </div>
+                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                      Subscriptions are trending higher. Pause inactive trials.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Ask AI Prompter footer -->
+          <div class="pt-3 border-t border-slate-700/50 mt-3 flex items-center justify-between text-xs">
+            <span class="text-slate-400">Want deeper portfolio guidance?</span>
+            <button id="ask-ai-drawer-btn" class="text-emerald-400 hover:text-emerald-300 font-semibold inline-flex items-center space-x-1">
+              <span>Ask FinBot</span>
+              <span>&rarr;</span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- E. ROW 3: INCOME VS EXPENSE CHART & RECENT TRANSACTIONS -->
+      <!-- ========================================== -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        
+        <!-- 1. Income vs Expense Chart (Left Card - 55% / 7 cols) -->
+        <div class="lg:col-span-7 glow-card rounded-2xl p-6 bg-[rgba(26,33,48,0.75)] border border-[rgba(255,255,255,0.08)] backdrop-blur-md shadow-xl flex flex-col justify-between">
+          
+          <!-- Chart Header & Legend -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[rgba(255,255,255,0.06)]">
+            <div>
+              <h3 class="text-base font-bold text-white tracking-tight">Income vs Expense Chart</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Weekly breakdown with predictive forecasting</p>
+            </div>
+
+            <!-- Custom Legend -->
+            <div class="flex items-center space-x-4 text-xs font-medium">
+              <div class="flex items-center space-x-1.5">
+                <span class="w-3 h-3 rounded-sm bg-gradient-to-t from-emerald-600 to-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span>
+                <span class="text-slate-300">Income</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <span class="w-3 h-3 rounded-sm bg-gradient-to-t from-indigo-600 to-purple-500 shadow-[0_0_8px_rgba(99,102,241,0.4)]"></span>
+                <span class="text-slate-300">Expense</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <span class="w-4 border-t-2 border-dashed border-white"></span>
+                <span class="text-slate-300">AI predictive Spending</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart.js Container -->
+          <div class="relative w-full h-[270px] mt-4">
+            <canvas id="cashflow-chart"></canvas>
+          </div>
+
+          <!-- Chart Footer / Summary metrics -->
+          <div class="mt-4 pt-3 border-t border-[rgba(255,255,255,0.06)] grid grid-cols-3 gap-2 text-center">
+            <div class="p-2 rounded-xl bg-slate-900/40">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Avg Weekly Net</span>
+              <p id="chart-stat-net" class="text-sm font-bold text-emerald-400 font-mono mt-0.5">+$687.50</p>
+            </div>
+            <div class="p-2 rounded-xl bg-slate-900/40">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Peak Outflow</span>
+              <p id="chart-stat-peak" class="text-sm font-bold text-rose-400 font-mono mt-0.5">Week 1 ($1,850)</p>
+            </div>
+            <div class="p-2 rounded-xl bg-slate-900/40">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Forecast Accuracy</span>
+              <p class="text-sm font-bold text-cyan-400 font-mono mt-0.5">97.8%</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Recent Transactions (Right Card - 45% / 5 cols) -->
+        <div class="lg:col-span-5 glow-card rounded-2xl p-6 bg-[rgba(26,33,48,0.75)] border border-[rgba(255,255,255,0.08)] backdrop-blur-md shadow-xl flex flex-col justify-between">
+          
+          <!-- Header + Add Quick Button -->
+          <div class="flex items-center justify-between pb-3 border-b border-[rgba(255,255,255,0.06)]">
+            <div>
+              <h3 class="text-base font-bold text-white tracking-tight">Recent Transactions</h3>
+              <p class="text-xs text-slate-400 mt-0.5" id="tx-count-sub">Showing 4 recent items</p>
+            </div>
+            <button 
+              id="btn-quick-add-tx" 
+              class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700/80 transition-all duration-150 hover:text-white"
+            >
+              <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>+ Add Quick</span>
+            </button>
+          </div>
+
+          <!-- Transaction List Container -->
+          <div class="space-y-2.5 pt-3 overflow-y-auto max-h-[300px] pr-1" id="transactions-container">
+            <!-- Populated dynamically via JS matching specifications -->
+          </div>
+
+          <!-- Bottom View All Link -->
+          <div class="pt-3 border-t border-[rgba(255,255,255,0.06)] mt-2 flex items-center justify-between text-xs">
+            <span class="text-slate-400">Full audit trail encrypted</span>
+            <button id="view-all-tx-btn" class="text-cyan-400 hover:text-cyan-300 font-semibold">View All Transactions &rarr;</button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- App Footer -->
+      <footer class="pt-6 pb-2 text-center text-xs text-slate-500 border-t border-[rgba(255,255,255,0.04)] flex flex-col sm:flex-row items-center justify-between">
+        <span>&copy; 2026 FinBot Autonomous Finance. Dark-mode SaaS Architecture.</span>
+        <div class="flex items-center space-x-4 mt-2 sm:mt-0">
+          <span class="flex items-center space-x-1.5 text-emerald-400">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Live Sync 2.4s</span>
+          </span>
+          <span class="text-slate-400">v3.4.0</span>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- MODALS & DRAWERS (Fully Accessible & Animated) -->
+  <!-- ======================================================= -->
+
+  <!-- 1. FINBOT AI CHAT SLIDE-OVER DRAWER -->
+  <div id="ai-chat-drawer-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300">
+    <div id="ai-chat-drawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-[#171C28] border-l border-[rgba(255,255,255,0.1)] shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-out z-50">
+      
+      <!-- Drawer Header -->
+      <div class="p-4 border-b border-[rgba(255,255,255,0.08)] flex items-center justify-between bg-slate-900/40">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-[1.5px] shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+            <div class="w-full h-full bg-[#171C28] rounded-[10px] flex items-center justify-center">
+              <span class="text-base">🤖</span>
+            </div>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+              <span>FinBot Assistant</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            </h4>
+            <p class="text-[11px] text-emerald-400" id="ai-chat-context-sub">Analyzing Salaried Profile</p>
+          </div>
+        </div>
+
+        <button id="close-ai-drawer-btn" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <!-- Quick Suggestion Chips -->
+      <div class="px-4 py-2.5 bg-slate-900/20 border-b border-[rgba(255,255,255,0.05)] overflow-x-auto flex items-center space-x-2 scrollbar-none">
+        <button class="ai-prompt-chip text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 hover:text-white hover:bg-emerald-500/20 hover:border-emerald-500/40 border border-slate-700 transition-all">
+          Why did Entertainment exceed?
+        </button>
+        <button class="ai-prompt-chip text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 hover:text-white hover:bg-emerald-500/20 hover:border-emerald-500/40 border border-slate-700 transition-all">
+          How to save $240 more?
+        </button>
+        <button class="ai-prompt-chip text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 hover:text-white hover:bg-emerald-500/20 hover:border-emerald-500/40 border border-slate-700 transition-all">
+          Compare with Student persona
+        </button>
+      </div>
+
+      <!-- Chat Messages Container -->
+      <div id="ai-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 text-xs leading-relaxed">
+        <!-- Initial Welcome Message from FinBot -->
+        <div class="flex items-start space-x-2.5">
+          <div class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-sm flex-shrink-0">
+            🤖
+          </div>
+          <div class="p-3.5 rounded-2xl rounded-tl-sm bg-[rgba(26,33,48,0.9)] border border-[rgba(255,255,255,0.08)] text-slate-200 max-w-[85%] shadow-md">
+            <p class="font-semibold text-emerald-400 mb-1">Hello! I'm FinBot 💡</p>
+            <p>I'm continuously auditing your cashflow, category caps, and savings progress. Ask me anything about your current budget or click a prompt above!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Input Field -->
+      <div class="p-4 border-t border-[rgba(255,255,255,0.08)] bg-slate-900/60">
+        <form id="ai-chat-form" class="flex items-center space-x-2">
+          <input 
+            type="text" 
+            id="ai-chat-input" 
+            placeholder="Ask FinBot about expenses, caps, or plans..." 
+            class="flex-1 px-3.5 py-2.5 rounded-xl bg-[#12161F] text-xs text-white placeholder-slate-400 border border-[rgba(255,255,255,0.1)] focus:outline-none focus:border-cyan-400"
+          >
+          <button 
+            type="submit" 
+            class="p-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-bold shadow-md hover:scale-105 transition-transform"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. LOG INCOME MODAL -->
+  <div id="modal-log-income" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-[#171C28] border border-[rgba(255,255,255,0.12)] rounded-2xl shadow-2xl overflow-hidden p-6 relative animate-scaleUp">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-700/60">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Log New Income</h3>
+            <p class="text-[11px] text-slate-400">Adds to monthly total &amp; recalibrates savings</p>
+          </div>
+        </div>
+        <button class="modal-close-btn p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="form-log-income" class="mt-4 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Income Source / Title</label>
+          <input type="text" id="income-source" required placeholder="e.g. Freelance Milestone, Dividend, Bonus" class="w-full px-3 py-2 rounded-xl bg-slate-900 text-sm text-white border border-slate-700 focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Amount ($)</label>
+            <input type="number" step="0.01" min="1" id="income-amount" required placeholder="500.00" class="w-full px-3 py-2 rounded-xl bg-slate-900 text-sm text-white font-mono border border-slate-700 focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Type</label>
+            <select id="income-type" class="w-full px-3 py-2 rounded-xl bg-slate-900 text-sm text-white border border-slate-700 focus:outline-none focus:border-emerald-500">
+              <option value="Variable">Variable Payout</option>
+              <option value="Fixed">Fixed Recurring</option>
+              <option value="Bonus">Performance Bonus</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Date</label>
+          <input type="date" id="income-date" class="w-full px-3 py-2 rounded-xl bg-slate-900 text-sm text-white border border-slate-700 focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-3">
+          <button type="button" class="modal-close-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#2ECC71] hover:bg-[#27ae60] text-slate-950 text-xs font-bold shadow-lg transition-transform hover:scale-105 active:scale-95">Save Income</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. LOG EXPENSE MODAL -->
+  <div id="modal-log-expense" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-[#171C28] border border-[rgba(255,255,255,0.12)] rounded-2xl shadow-2xl overflow-hidden p-6 relative animate-scaleUp">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-700/60">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Log New Expense</h3>
+            <p class="text-[11px] text-slate-400">Updates category cap &amp; runs overspend check</p>
+          </div>
+        </div>
+        <button class="modal-close-btn p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="form-log-expense" class="mt-4 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Expense Title / Vendor</label>
+          <input type="text" id="expense-title" required placeholder="e.g. Whole Foods, Trader Joe's, Gas" class="w-full px-3 py-2 rounded-xl bg-slate-900 text-sm text-white border border-slate-700 focus:outline-none focus:border-rose-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Category</label>
+            <select id="expense-category" class="w-full px-3 py-2 rounded-xl bg-slate-900 text-sm text-white border border-slate-700 focus:outline-none focus:border-rose-500">
+              <!-- Populated dynamically to match active persona -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Amount ($)</label>
+            <input type="number" step="0.01" min="0.5" id="expense-amount" required placeholder="45.00" class="w-full px-3 py-2 rounded-xl bg-slate-900 text-sm text-white font-mono border border-slate-700 focus:outline-none focus:border-rose-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Type</label>
+            <select id="expense-type" class="w-full px-3 py-2 rounded-xl bg-slate-900 text-sm text-white border border-slate-700 focus:outline-none focus:border-rose-500">
+              <option value="Essential">Essential Need</option>
+              <option value="Discretionary">Discretionary Want</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Date</label>
+            <input type="date" id="expense-date" class="w-full px-3 py-2 rounded-xl bg-slate-900 text-sm text-white border border-slate-700 focus:outline-none focus:border-rose-500">
+          </div>
+        </div>
+
+        <!-- Live Cap Warning Indicator in Modal -->
+        <div id="modal-overspend-preview" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 flex items-center space-x-2">
+          <span>⚠️</span>
+          <span id="modal-overspend-msg">This expense will exceed the category monthly cap!</span>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-3">
+          <button type="button" class="modal-close-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#F06565] hover:bg-[#e05252] text-white text-xs font-bold shadow-lg transition-transform hover:scale-105 active:scale-95">Record Expense</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. SAVINGS GOALS & EMERGENCY FUND MODAL -->
+  <div id="modal-savings-goals" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-[#171C28] border border-[rgba(255,255,255,0.12)] rounded-2xl shadow-2xl overflow-hidden p-6 relative animate-scaleUp">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-700/60">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-400">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Savings Goals &amp; Emergency Fund</h3>
+            <p class="text-[11px] text-slate-400">Target allocations and automated yield accounts</p>
+          </div>
+        </div>
+        <button class="modal-close-btn p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-4" id="goals-list-container">
+        <!-- Goal items rendered dynamically -->
+      </div>
+
+      <!-- Quick Surplus Allocation Tool -->
+      <div class="mt-5 p-3.5 rounded-xl bg-slate-900/60 border border-teal-500/30">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-teal-400">⚡ Instant Surplus Allocation</span>
+          <span class="text-xs font-mono font-bold text-white" id="surplus-val-display">$240.00 Available</span>
+        </div>
+        <p class="text-[11px] text-slate-300 mt-1">Directly inject your $240 monthly surplus into your Emergency Fund with one click.</p>
+        <button id="btn-modal-deposit-surplus" class="mt-2.5 w-full py-2 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-bold text-xs shadow-md hover:scale-[1.01] transition-transform">
+          Transfer $240 to Emergency Fund
+        </button>
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-slate-700/60 flex justify-end">
+        <button class="modal-close-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-white hover:bg-slate-700">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. MONTHLY REPORTS MODAL & EXPORT -->
+  <div id="modal-monthly-report" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-[#171C28] border border-[rgba(255,255,255,0.12)] rounded-2xl shadow-2xl overflow-hidden p-6 relative animate-scaleUp max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-700/60 flex-shrink-0">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Monthly Financial Executive Summary</h3>
+            <p class="text-[11px] text-slate-400" id="report-period-text">Statement for October 2026</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="btn-export-csv" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Export CSV</span>
+          </button>
+          <button class="modal-close-btn p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Report Body Content -->
+      <div class="mt-4 overflow-y-auto space-y-4 pr-1 text-xs text-slate-300" id="report-body">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between flex-shrink-0">
+        <span class="text-[11px] text-slate-400">Generated by FinBot AI Engine</span>
+        <div class="flex items-center space-x-2">
+          <button id="btn-print-report" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold">Print Statement</button>
+          <button class="modal-close-btn px-4 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. SETTINGS MODAL -->
+  <div id="modal-settings" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-[#171C28] border border-[rgba(255,255,255,0.12)] rounded-2xl shadow-2xl overflow-hidden p-6 relative animate-scaleUp">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-700/60">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-slate-700/60 flex items-center justify-center text-slate-300">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">App &amp; Engine Preferences</h3>
+            <p class="text-[11px] text-slate-400">Glow effects, notifications &amp; currency</p>
+          </div>
+        </div>
+        <button class="modal-close-btn p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-4">
+        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50">
+          <div>
+            <span class="text-xs font-semibold text-white">Mouse Spotlight Glow Effect</span>
+            <p class="text-[11px] text-slate-400">Interactive radial cursor illumination</p>
+          </div>
+          <input type="checkbox" id="setting-toggle-glow" checked class="w-5 h-5 accent-emerald-500 rounded cursor-pointer">
+        </div>
+
+        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50">
+          <div>
+            <span class="text-xs font-semibold text-white">Sound Micro-Feedback</span>
+            <p class="text-[11px] text-slate-400">Subtle synth pops on transactions</p>
+          </div>
+          <input type="checkbox" id="setting-toggle-sound" checked class="w-5 h-5 accent-emerald-500 rounded cursor-pointer">
+        </div>
+
+        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50">
+          <div>
+            <span class="text-xs font-semibold text-white">AI Proactive Advisories</span>
+            <p class="text-[11px] text-slate-400">Overspending popups and auto-rebalance</p>
+          </div>
+          <input type="checkbox" id="setting-toggle-ai-alerts" checked class="w-5 h-5 accent-emerald-500 rounded cursor-pointer">
+        </div>
+      </div>
+
+      <div class="mt-6 pt-3 border-t border-slate-700/60 flex justify-end">
+        <button class="modal-close-btn px-5 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:bg-emerald-400">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- Core JavaScript Module -->
+  <script src="app.js"></script>
+</body>
+</html>

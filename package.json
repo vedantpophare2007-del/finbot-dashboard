@@ -1,0 +1,22 @@
+{
+  "name": "finbot-dashboard",
+  "version": "1.0.0",
+  "description": "FinBot — AI Personal Finance Advisor Dashboard",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 server.py",
+    "dev": "python3 server.py",
+    "serve": "npx serve .",
+    "python-serve": "python3 -m http.server 8080"
+  },
+  "keywords": [
+    "finbot",
+    "personal-finance",
+    "ai-advisor",
+    "dashboard",
+    "dark-mode",
+    "tailwind"
+  ],
+  "author": "FinBot Team",
+  "license": "MIT"
+}
