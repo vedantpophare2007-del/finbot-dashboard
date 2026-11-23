@@ -31,15 +31,19 @@ FinBot is a modern, dark-mode SaaS financial telemetry and autonomous advisory p
 ## 👥 4 Rich Pre-Loaded Personas
 
 Toggle effortlessly via the **Quick Persona Switcher** in the sidebar or from the top-right profile dropdown:
+
 1. **Salaried (`Sarah Chen`):**
    * Income: `$6,200.00` | Expenses: `$3,450.00` | Savings: `$2,750.00` (`44.3%`)
    * Categories: Rent/Mortgage, Food & Groceries, Transport, Entertainment (⚠️ Over Spent!), Utilities.
+
 2. **Student (`Alex Rivera`):**
    * Income: `$1,250.00` | Expenses: `$920.00` | Savings: `$330.00` (`26.4%`)
    * Categories: Dorm/Meal Plan, Textbooks & Courseware, Campus Transit, Weekend Socials (⚠️ Over Spent!), Study Snacks.
+
 3. **Freelancer (`Liam Vance`):**
    * Income: `$7,800.00` | Expenses: `$4,100.00` | Savings: `$3,700.00` (`47.4%`)
    * Categories: Co-Working Space, Cloud & Software Tools (⚠️ Over Spent!), Marketing, Client Dinners, Tax Reserve.
+
 4. **Household (`The Patel Family`):**
    * Income: `$9,600.00` | Expenses: `$6,850.00` | Savings: `$2,750.00` (`28.6%`)
    * Categories: Mortgage & Escrow, Family Groceries (⚠️ Over Spent!), Daycare & Tutoring, Utilities & Solar, Recreation.
@@ -63,12 +67,31 @@ Toggle effortlessly via the **Quick Persona Switcher** in the sidebar or from th
 ## 🚀 Quick Start Guide
 
 ### Option 1: Direct File Open
+
 Simply double-click or open `index.html` in any modern web browser (Chrome, Safari, Edge, Firefox).
 
 ### Option 2: Run Built-In Python Server
+
 Run the included lightweight server:
+
 ```bash
 cd /Users/vedantanuppophare/.gemini/antigravity/scratch/finbot-dashboard
 python3 server.py
 ```
-Then visit: **`http://localhost:8080`**
+
+Then visit: **http://localhost:8080**
+
+---
+
+## 🔗 Project Links
+
+### 🌐 Live Project
+
+https://finbot-dashboard.onrender.com/
+
+### 📄 Project Documentation
+
+https://drive.google.com/file/d/1b2pS42sugs8uRrbHlzGsPucMjhchmZJW/view?usp=drivesdk
+
+---
+
